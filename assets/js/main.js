@@ -176,7 +176,8 @@ async function measureUpload(onProgress) {
         },
       });
 
-      if (!response.ok) {
+      const responseIsOpaqueSuccess = response.type === 'opaque' && response.status === 0;
+      if (!response.ok && !responseIsOpaqueSuccess) {
         await delay(200);
         continue;
       }
