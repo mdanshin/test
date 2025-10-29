@@ -567,6 +567,28 @@ function setupSpeedTestWidget() {
         );
         speedButtonElement.textContent = 'Повторить тест';
         hasValidResults = true;
+      } else if (hasDownloadData) {
+        const downloadSpeed = formatMbps(downloadResult.mbps);
+
+        setText('speedValue', downloadSpeed);
+        setSpeedGaugeProgress(downloadResult.mbps);
+        setText(
+          'speedStatus',
+          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)} · ↑ недоступно`,
+        );
+        speedButtonElement.textContent = 'Повторить тест';
+        hasValidResults = true;
+      } else if (hasUploadData) {
+        const uploadSpeed = formatMbps(uploadResult.mbps);
+
+        setText('speedValue', uploadSpeed);
+        setSpeedGaugeProgress(uploadResult.mbps);
+        setText(
+          'speedStatus',
+          `↑ ${uploadSpeed} Мбит/с за ${formatDuration(uploadResult.seconds)} · ↓ недоступно`,
+        );
+        speedButtonElement.textContent = 'Повторить тест';
+        hasValidResults = true;
       }
     } finally {
       if (!hasValidResults) {
