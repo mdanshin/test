@@ -170,6 +170,7 @@ async function measureUpload(onProgress) {
       const response = await fetch(url, {
         method: 'POST',
         cache: 'no-store',
+        mode: 'no-cors',
         body: payload,
         headers: {
           'Content-Type': 'application/octet-stream',
