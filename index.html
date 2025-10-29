@@ -52,6 +52,26 @@
               <h2>Локальное время</h2>
               <p id="diag-localTime">—</p>
             </article>
+            <article class="metric card speed-card">
+              <h2>Скорость соединения</h2>
+              <div class="speed-widget">
+                <div
+                  class="speed-gauge"
+                  id="diag-speedGauge"
+                  role="img"
+                  aria-label="Индикатор скорости интернет-соединения"
+                >
+                  <div class="speed-gauge__inner">
+                    <span class="speed-gauge__value" id="diag-speedValue">—</span>
+                    <span class="speed-gauge__unit">Мбит/с</span>
+                  </div>
+                </div>
+                <p class="speed-status" id="diag-speedStatus">Ожидание измерения</p>
+                <button class="speed-button" type="button" id="diag-speedBtn">
+                  Проверить скорость
+                </button>
+              </div>
+            </article>
           </div>
         </div>
       </header>
