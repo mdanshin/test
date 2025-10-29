@@ -563,7 +563,7 @@ function setupSpeedTestWidget() {
         setSpeedGaugeProgress(downloadResult.mbps);
         setText(
           'speedStatus',
-          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)} · ↑ ${uploadSpeed} Мбит/с за ${formatDuration(
+          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)}\n↑ ${uploadSpeed} Мбит/с за ${formatDuration(
             uploadResult.seconds,
           )}`,
         );
@@ -576,7 +576,7 @@ function setupSpeedTestWidget() {
         setSpeedGaugeProgress(downloadResult.mbps);
         setText(
           'speedStatus',
-          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)} · ↑ недоступно`,
+          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)}\n↑ недоступно`,
         );
         speedButtonElement.textContent = 'Повторить тест';
         hasValidResults = true;
@@ -587,7 +587,7 @@ function setupSpeedTestWidget() {
         setSpeedGaugeProgress(uploadResult.mbps);
         setText(
           'speedStatus',
-          `↑ ${uploadSpeed} Мбит/с за ${formatDuration(uploadResult.seconds)} · ↓ недоступно`,
+          `↑ ${uploadSpeed} Мбит/с за ${formatDuration(uploadResult.seconds)}\n↓ недоступно`,
         );
         speedButtonElement.textContent = 'Повторить тест';
         hasValidResults = true;
