@@ -7,6 +7,8 @@ let speedGaugeElement;
 let speedButtonElement;
 let speedTestInProgress = false;
 
+const MIN_TEST_DURATION_MS = 8000;
+
 const SPEED_REFERENCE_MBPS = 200;
 const SPEED_TEST_ENDPOINTS = [
   'https://speed.cloudflare.com/__down?bytes=4000000',
@@ -84,6 +86,127 @@ function resetSpeedDisplay() {
   setText('speedValue', '—');
   setText('speedStatus', 'Ожидание измерения');
   setSpeedGaugeProgress(0);
+}
+
+function formatDuration(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return '0.0 с';
+  }
+
+  if (seconds >= 10) {
+    return `${seconds.toFixed(0)} с`;
+  }
+
+  return `${seconds.toFixed(1)} с`;
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function measureDownload(onProgress) {
+  const startTime = performance.now();
+  let bytesTotal = 0;
+  let lastEndpointIndex = 0;
+
+  while (performance.now() - startTime < MIN_TEST_DURATION_MS) {
+    const endpoint = SPEED_TEST_ENDPOINTS[lastEndpointIndex % SPEED_TEST_ENDPOINTS.length];
+    lastEndpointIndex += 1;
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${endpoint}${separator}cacheBust=${Date.now()}`;
+
+    try {
+      const requestStart = performance.now();
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        await delay(200);
+        continue;
+      }
+
+      const buffer = await response.arrayBuffer();
+      const elapsed = (performance.now() - startTime) / 1000;
+      bytesTotal += buffer.byteLength;
+
+      const mbps = bytesTotal > 0 && elapsed > 0 ? (bytesTotal * 8) / (elapsed * 1_000_000) : 0;
+
+      onProgress({
+        direction: 'download',
+        mbps,
+        bytes: bytesTotal,
+        seconds: elapsed,
+        lastRequestSeconds: (performance.now() - requestStart) / 1000,
+      });
+    } catch (error) {
+      await delay(200);
+    }
+  }
+
+  const totalSeconds = (performance.now() - startTime) / 1000;
+  const mbps = bytesTotal > 0 && totalSeconds > 0 ? (bytesTotal * 8) / (totalSeconds * 1_000_000) : 0;
+
+  return {
+    direction: 'download',
+    mbps,
+    bytes: bytesTotal,
+    seconds: totalSeconds,
+  };
+}
+
+async function measureUpload(onProgress) {
+  const startTime = performance.now();
+  const uploadEndpoint = 'https://speed.cloudflare.com/__up';
+  const payloadSizes = [1_250_000, 750_000, 2_000_000];
+  let bytesTotal = 0;
+  let payloadIndex = 0;
+
+  while (performance.now() - startTime < MIN_TEST_DURATION_MS) {
+    const size = payloadSizes[payloadIndex % payloadSizes.length];
+    payloadIndex += 1;
+    const payload = new Uint8Array(size);
+    const url = `${uploadEndpoint}?cacheBust=${Date.now()}`;
+
+    try {
+      const requestStart = performance.now();
+      const response = await fetch(url, {
+        method: 'POST',
+        cache: 'no-store',
+        body: payload,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+      });
+
+      if (!response.ok) {
+        await delay(200);
+        continue;
+      }
+
+      const elapsed = (performance.now() - startTime) / 1000;
+      bytesTotal += size;
+
+      const mbps = bytesTotal > 0 && elapsed > 0 ? (bytesTotal * 8) / (elapsed * 1_000_000) : 0;
+
+      onProgress({
+        direction: 'upload',
+        mbps,
+        bytes: bytesTotal,
+        seconds: elapsed,
+        lastRequestSeconds: (performance.now() - requestStart) / 1000,
+      });
+    } catch (error) {
+      await delay(200);
+    }
+  }
+
+  const totalSeconds = (performance.now() - startTime) / 1000;
+  const mbps = bytesTotal > 0 && totalSeconds > 0 ? (bytesTotal * 8) / (totalSeconds * 1_000_000) : 0;
+
+  return {
+    direction: 'upload',
+    mbps,
+    bytes: bytesTotal,
+    seconds: totalSeconds,
+  };
 }
 
 function formatBytes(bytes) {
@@ -395,73 +518,71 @@ function setupSpeedTestWidget() {
 
     speedButtonElement.disabled = true;
     speedButtonElement.textContent = 'Измеряем...';
-    setText('speedStatus', 'Идёт загрузка тестовых данных...');
+    speedGaugeElement.classList.add('is-active');
+    setText('speedStatus', 'Подготовка к измерению...');
     setText('speedValue', '0.0');
     setSpeedGaugeProgress(0);
 
-    let measuredMbps = null;
-    let measuredBytes = 0;
-    let measuredTime = 0;
+    let downloadResult = null;
+    let uploadResult = null;
+    let hasValidResults = false;
 
     try {
-      for (const endpoint of SPEED_TEST_ENDPOINTS) {
-        const separator = endpoint.includes('?') ? '&' : '?';
-        const url = `${endpoint}${separator}cacheBust=${Date.now()}`;
+      const updateProgress = ({ direction, mbps, bytes, seconds }) => {
+        const formattedSpeed = formatMbps(mbps);
+        const label = direction === 'download' ? '↓' : '↑';
+        const phaseText =
+          direction === 'download'
+            ? 'Скачиваем тестовые данные'
+            : 'Отправляем тестовые данные';
 
-        try {
-          const start = performance.now();
-          const response = await fetch(url, { cache: 'no-store' });
-          if (!response.ok) continue;
-
-          const buffer = await response.arrayBuffer();
-          const bytes = buffer.byteLength;
-          const elapsed = (performance.now() - start) / 1000;
-
-          if (!bytes || elapsed <= 0) {
-            continue;
-          }
-
-          measuredBytes = bytes;
-          measuredTime = elapsed;
-          measuredMbps = (bytes * 8) / (elapsed * 1_000_000);
-          break;
-        } catch (error) {
-          // пробуем следующий эндпоинт
-        }
-      }
-
-      if (Number.isFinite(measuredMbps) && measuredMbps > 0) {
-        const formattedSpeed = formatMbps(measuredMbps);
-        setText('speedValue', formattedSpeed);
-        setSpeedGaugeProgress(measuredMbps);
-
-        const timeText = measuredTime >= 1
-          ? `${measuredTime.toFixed(2)} с`
-          : `${Math.round(measuredTime * 1000)} мс`;
         setText(
           'speedStatus',
-          `≈ ${formattedSpeed} Мбит/с · ${formatBytes(measuredBytes)} за ${timeText}`,
+          `${phaseText} · ${label} ${formattedSpeed} Мбит/с · ${formatBytes(bytes)} за ${formatDuration(
+            seconds,
+          )}`,
+        );
+        setText('speedValue', formattedSpeed);
+        setSpeedGaugeProgress(mbps);
+      };
+
+      downloadResult = await measureDownload(updateProgress);
+      uploadResult = await measureUpload(updateProgress);
+
+      const hasDownloadData =
+        !!downloadResult && downloadResult.bytes > 0 && downloadResult.seconds > 0;
+      const hasUploadData = !!uploadResult && uploadResult.bytes > 0 && uploadResult.seconds > 0;
+
+      if (hasDownloadData && hasUploadData) {
+        const downloadSpeed = formatMbps(downloadResult.mbps);
+        const uploadSpeed = formatMbps(uploadResult.mbps);
+
+        setText('speedValue', downloadSpeed);
+        setSpeedGaugeProgress(downloadResult.mbps);
+        setText(
+          'speedStatus',
+          `↓ ${downloadSpeed} Мбит/с за ${formatDuration(downloadResult.seconds)} · ↑ ${uploadSpeed} Мбит/с за ${formatDuration(
+            uploadResult.seconds,
+          )}`,
         );
         speedButtonElement.textContent = 'Повторить тест';
-      } else {
-        setText('speedValue', '—');
-        setSpeedGaugeProgress(0);
-        setText('speedStatus', 'Не удалось измерить скорость');
-        speedButtonElement.textContent = 'Попробовать снова';
+        hasValidResults = true;
       }
     } finally {
+      if (!hasValidResults) {
+        setText('speedValue', '—');
+        setText('speedStatus', 'Не удалось измерить скорость');
+        setSpeedGaugeProgress(0);
+        speedButtonElement.textContent = 'Попробовать снова';
+      }
+
+      speedGaugeElement.classList.remove('is-active');
       speedButtonElement.disabled = false;
       speedTestInProgress = false;
     }
   };
 
   speedButtonElement.addEventListener('click', runSpeedTest);
-
-  setTimeout(() => {
-    if (!speedTestInProgress) {
-      runSpeedTest();
-    }
-  }, 1600);
 }
 
 function setupGeoLocation() {
