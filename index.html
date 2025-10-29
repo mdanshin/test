@@ -3,61 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Мой тестовый проект</title>
+    <title>Центр диагностики подключения</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="container">
-        <span class="badge">GitHub Pages</span>
-        <h1>Простой тестовый проект</h1>
-        <p class="lead">
-          Эта страница собирает и показывает максимум диагностической информации
-          о вашем посещении прямо в браузере.
-        </p>
-        <a class="cta" href="#diagnostics">Посмотреть диагностику</a>
-      </div>
-    </header>
+    <div class="page">
+      <header class="hero">
+        <span class="glow glow-1" aria-hidden="true"></span>
+        <span class="glow glow-2" aria-hidden="true"></span>
+        <div class="shell hero-shell">
+          <div class="hero-intro">
+            <span class="hero-label">Realtime Intelligence</span>
+            <h1>Центр диагностики подключения</h1>
+            <p>
+              Современный мониторинг среды посетителя: сеть, устройство, браузер и
+              производительность обновляются в реальном времени, формируя полный профиль
+              подключения.
+            </p>
+          </div>
+          <div class="hero-metrics">
+            <article class="metric card">
+              <h2>IP-адрес</h2>
+              <p id="diag-ip">Запрашиваем...</p>
+            </article>
+            <article class="metric card">
+              <h2>Провайдер</h2>
+              <p id="diag-network">—</p>
+            </article>
+            <article class="metric card">
+              <h2>Местоположение</h2>
+              <p id="diag-location">—</p>
+            </article>
+            <article class="metric card">
+              <h2>Часовой пояс</h2>
+              <p id="diag-timezone">—</p>
+            </article>
+            <article class="metric card">
+              <h2>Платформа</h2>
+              <p id="diag-platform">—</p>
+            </article>
+            <article class="metric card">
+              <h2>Локальное время</h2>
+              <p id="diag-localTime">—</p>
+            </article>
+          </div>
+        </div>
+      </header>
 
-    <main>
-      <section class="container diagnostics" id="diagnostics">
-        <h2>Диагностическая сводка</h2>
-        <p class="muted">
-          Ниже приведена подробная информация о вашем устройстве, браузере,
-          сети и среде. Данные обновляются в реальном времени и не покидают ваш
-          браузер, за исключением запросов к открытым сервисам IP-геолокации.
-        </p>
-
-        <div class="diag-grid">
-          <section class="card diag-card">
-            <h3>Браузер и устройство</h3>
-            <dl class="diag-list">
+      <main class="main">
+        <section class="shell section-grid">
+          <article class="panel card">
+            <header>
+              <h2>Паспорт браузера</h2>
+              <p>Углублённые сведения о клиенте и языковых предпочтениях.</p>
+            </header>
+            <dl class="data-list">
               <div>
                 <dt>User-Agent</dt>
-                <dd id="diag-user-agent">Собираем данные...</dd>
+                <dd id="diag-userAgent">—</dd>
               </div>
               <div>
-                <dt>Платформа</dt>
-                <dd id="diag-platform">—</dd>
+                <dt>UA-бренды</dt>
+                <dd id="diag-uaBrands">—</dd>
               </div>
               <div>
                 <dt>Языки</dt>
                 <dd id="diag-languages">—</dd>
               </div>
-              <div>
-                <dt>Часовой пояс</dt>
-                <dd id="diag-timezone">—</dd>
-              </div>
-              <div>
-                <dt>Локальное время</dt>
-                <dd id="diag-local-time">—</dd>
-              </div>
+            </dl>
+          </article>
+
+          <article class="panel card">
+            <header>
+              <h2>Аппаратная конфигурация</h2>
+              <p>Основные характеристики устройства и наличие мобильных возможностей.</p>
+            </header>
+            <dl class="data-list">
               <div>
                 <dt>Аппаратные потоки</dt>
                 <dd id="diag-hardware">—</dd>
@@ -75,15 +102,18 @@
                 <dd id="diag-touch">—</dd>
               </div>
               <div>
-                <dt>Батарея</dt>
+                <dt>Состояние батареи</dt>
                 <dd id="diag-battery">—</dd>
               </div>
             </dl>
-          </section>
+          </article>
 
-          <section class="card diag-card">
-            <h3>Экран и производительность</h3>
-            <dl class="diag-list">
+          <article class="panel card">
+            <header>
+              <h2>Экран и производительность</h2>
+              <p>Параметры отображения и ключевые показатели загрузки.</p>
+            </header>
+            <dl class="data-list">
               <div>
                 <dt>Разрешение экрана</dt>
                 <dd id="diag-screen">—</dd>
@@ -94,7 +124,7 @@
               </div>
               <div>
                 <dt>Плотность пикселей</dt>
-                <dd id="diag-pixel-ratio">—</dd>
+                <dd id="diag-pixelRatio">—</dd>
               </div>
               <div>
                 <dt>Видимость страницы</dt>
@@ -113,23 +143,14 @@
                 <dd id="diag-storage">—</dd>
               </div>
             </dl>
-          </section>
+          </article>
 
-          <section class="card diag-card">
-            <h3>Сеть и происхождение</h3>
-            <dl class="diag-list">
-              <div>
-                <dt>IP-адрес</dt>
-                <dd id="diag-ip">Запрашиваем...</dd>
-              </div>
-              <div>
-                <dt>Провайдер</dt>
-                <dd id="diag-network">—</dd>
-              </div>
-              <div>
-                <dt>Местоположение</dt>
-                <dd id="diag-location">—</dd>
-              </div>
+          <article class="panel card">
+            <header>
+              <h2>Сетевой контекст</h2>
+              <p>Активные характеристики соединения и статус присутствия.</p>
+            </header>
+            <dl class="data-list">
               <div>
                 <dt>Состояние сети</dt>
                 <dd id="diag-online">—</dd>
@@ -142,92 +163,47 @@
                 <dt>Реферер</dt>
                 <dd id="diag-referrer">—</dd>
               </div>
-              <div>
-                <dt>Источники брендов UA</dt>
-                <dd id="diag-ua-brands">—</dd>
-              </div>
             </dl>
-          </section>
-
-          <section class="card diag-card">
-            <h3>Геопозиция</h3>
-            <p class="muted">
-              Для получения точных координат требуется ваше разрешение. Данные не
-              отправляются на сервер и остаются только на этой странице.
-            </p>
-            <button class="geo-button" type="button" id="diag-geo-btn">
-              Запросить координаты
-            </button>
-            <dl class="diag-list">
-              <div>
-                <dt>Статус</dt>
-                <dd id="diag-geo-status">Ожидание действия</dd>
-              </div>
-              <div>
-                <dt>Широта / долгота</dt>
-                <dd id="diag-geo">—</dd>
-              </div>
-              <div>
-                <dt>Точность</dt>
-                <dd id="diag-geo-accuracy">—</dd>
-              </div>
-            </dl>
-          </section>
-        </div>
-      </section>
-
-      <section class="container" id="features">
-        <h2>Что включено</h2>
-        <div class="features">
-          <article class="card">
-            <h3>Чистая разметка</h3>
-            <p>
-              Структура страницы построена на семантическом HTML и легко
-              расширяется под нужды проекта.
-            </p>
           </article>
-          <article class="card">
-            <h3>Минимальные стили</h3>
-            <p>
-              Подключен небольшой набор стилей, чтобы страница выглядела
-              аккуратно без дополнительной настройки.
-            </p>
-          </article>
-          <article class="card">
-            <h3>Немного интерактива</h3>
-            <p>
-              Простая анимация и смена темы на чистом JavaScript.
-            </p>
-          </article>
-        </div>
-      </section>
+        </section>
 
-      <section class="highlight" id="steps">
-        <div class="container">
-          <h2>Как опубликовать этот проект</h2>
-          <ol class="steps">
-            <li>Создайте новый репозиторий на GitHub и загрузите в него файлы.</li>
-            <li>
-              Откройте вкладку <strong>Settings → Pages</strong> и выберите ветку
-              <code>main</code> (или <code>master</code>) и директорию <code>/</code>.
-            </li>
-            <li>
-              Нажмите <strong>Save</strong>. Через пару минут сайт станет доступен по
-              адресу <code>https://&lt;ваш_логин&gt;.github.io/&lt;имя_репозитория&gt;</code>.
-            </li>
-          </ol>
-        </div>
-      </section>
-    </main>
+        <section class="shell geo-section card">
+          <div class="geo-header">
+            <div>
+              <h2>Точечная геолокация</h2>
+              <p>
+                Дополнительный слой точности — по запросу. Мы не передаём координаты на
+                сервер, все вычисления остаются в вашем браузере.
+              </p>
+            </div>
+            <button class="geo-button" type="button" id="diag-geo-btn">Запросить координаты</button>
+          </div>
+          <dl class="data-list geo-list">
+            <div>
+              <dt>Статус</dt>
+              <dd id="diag-geoStatus">Ожидание действия</dd>
+            </div>
+            <div>
+              <dt>Широта / долгота</dt>
+              <dd id="diag-geo">—</dd>
+            </div>
+            <div>
+              <dt>Точность</dt>
+              <dd id="diag-geoAccuracy">—</dd>
+            </div>
+          </dl>
+        </section>
+      </main>
 
-    <footer class="site-footer">
-      <div class="container">
-        <p>
-          Сделано с любовью к статическим сайтам.
-          <button class="theme-toggle" type="button">Сменить тему</button>
-        </p>
-      </div>
-    </footer>
+      <footer class="footer">
+        <div class="shell footer-shell">
+          <p>
+            Данные собираются напрямую из возможностей вашего браузера и обновляются
+            мгновенно. Добро пожаловать в зону повышенной наблюдаемости.
+          </p>
+        </div>
+      </footer>
+    </div>
 
     <script src="assets/js/main.js"></script>
   </body>
