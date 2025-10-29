@@ -3,6 +3,15 @@ const cards = document.querySelectorAll('.card');
 const diagElements = {};
 const locale = navigator.languages?.[0] ?? navigator.language ?? 'ru-RU';
 let timeZoneInterval;
+let speedGaugeElement;
+let speedButtonElement;
+let speedTestInProgress = false;
+
+const SPEED_REFERENCE_MBPS = 200;
+const SPEED_TEST_ENDPOINTS = [
+  'https://speed.cloudflare.com/__down?bytes=4000000',
+  'https://speed.cloudflare.com/__down?bytes=1500000',
+];
 
 const connection =
   navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -29,6 +38,8 @@ function cacheDiagElements() {
     'ip',
     'network',
     'location',
+    'speedValue',
+    'speedStatus',
     'online',
     'connection',
     'referrer',
@@ -47,6 +58,32 @@ function setText(key, value) {
   const el = diagElements[key];
   if (!el) return;
   el.textContent = value;
+}
+
+function formatMbps(value) {
+  if (!Number.isFinite(value) || value <= 0) {
+    return '0.0';
+  }
+
+  const decimals = value >= 100 ? 0 : value >= 10 ? 1 : 2;
+  return value.toFixed(decimals);
+}
+
+function setSpeedGaugeProgress(mbps) {
+  if (!speedGaugeElement) return;
+  if (!Number.isFinite(mbps) || mbps <= 0) {
+    speedGaugeElement.style.setProperty('--speed-progress', 0.02);
+    return;
+  }
+
+  const normalized = Math.max(0.08, Math.min(1, mbps / SPEED_REFERENCE_MBPS));
+  speedGaugeElement.style.setProperty('--speed-progress', normalized);
+}
+
+function resetSpeedDisplay() {
+  setText('speedValue', '—');
+  setText('speedStatus', 'Ожидание измерения');
+  setSpeedGaugeProgress(0);
 }
 
 function formatBytes(bytes) {
@@ -342,6 +379,91 @@ async function fetchIpDetails() {
   setText('network', '—');
 }
 
+function setupSpeedTestWidget() {
+  speedGaugeElement = document.getElementById('diag-speedGauge');
+  speedButtonElement = document.getElementById('diag-speedBtn');
+
+  if (!speedGaugeElement || !speedButtonElement) {
+    return;
+  }
+
+  resetSpeedDisplay();
+
+  const runSpeedTest = async () => {
+    if (speedTestInProgress) return;
+    speedTestInProgress = true;
+
+    speedButtonElement.disabled = true;
+    speedButtonElement.textContent = 'Измеряем...';
+    setText('speedStatus', 'Идёт загрузка тестовых данных...');
+    setText('speedValue', '0.0');
+    setSpeedGaugeProgress(0);
+
+    let measuredMbps = null;
+    let measuredBytes = 0;
+    let measuredTime = 0;
+
+    try {
+      for (const endpoint of SPEED_TEST_ENDPOINTS) {
+        const separator = endpoint.includes('?') ? '&' : '?';
+        const url = `${endpoint}${separator}cacheBust=${Date.now()}`;
+
+        try {
+          const start = performance.now();
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) continue;
+
+          const buffer = await response.arrayBuffer();
+          const bytes = buffer.byteLength;
+          const elapsed = (performance.now() - start) / 1000;
+
+          if (!bytes || elapsed <= 0) {
+            continue;
+          }
+
+          measuredBytes = bytes;
+          measuredTime = elapsed;
+          measuredMbps = (bytes * 8) / (elapsed * 1_000_000);
+          break;
+        } catch (error) {
+          // пробуем следующий эндпоинт
+        }
+      }
+
+      if (Number.isFinite(measuredMbps) && measuredMbps > 0) {
+        const formattedSpeed = formatMbps(measuredMbps);
+        setText('speedValue', formattedSpeed);
+        setSpeedGaugeProgress(measuredMbps);
+
+        const timeText = measuredTime >= 1
+          ? `${measuredTime.toFixed(2)} с`
+          : `${Math.round(measuredTime * 1000)} мс`;
+        setText(
+          'speedStatus',
+          `≈ ${formattedSpeed} Мбит/с · ${formatBytes(measuredBytes)} за ${timeText}`,
+        );
+        speedButtonElement.textContent = 'Повторить тест';
+      } else {
+        setText('speedValue', '—');
+        setSpeedGaugeProgress(0);
+        setText('speedStatus', 'Не удалось измерить скорость');
+        speedButtonElement.textContent = 'Попробовать снова';
+      }
+    } finally {
+      speedButtonElement.disabled = false;
+      speedTestInProgress = false;
+    }
+  };
+
+  speedButtonElement.addEventListener('click', runSpeedTest);
+
+  setTimeout(() => {
+    if (!speedTestInProgress) {
+      runSpeedTest();
+    }
+  }, 1600);
+}
+
 function setupGeoLocation() {
   const button = document.getElementById('diag-geo-btn');
   if (!button) return;
@@ -417,6 +539,7 @@ function setupOnlineListeners() {
 
 function initDiagnostics() {
   cacheDiagElements();
+  setupSpeedTestWidget();
   updateLanguageInfo();
   updateHardwareInfo();
   updateTimeZoneInfo();
