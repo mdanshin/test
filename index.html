@@ -18,14 +18,164 @@
         <span class="badge">GitHub Pages</span>
         <h1>Простой тестовый проект</h1>
         <p class="lead">
-          Этот сайт создан как демонстрация того, насколько легко опубликовать
-          статический проект с помощью GitHub Pages.
+          Эта страница собирает и показывает максимум диагностической информации
+          о вашем посещении прямо в браузере.
         </p>
-        <a class="cta" href="#steps">Как развернуть</a>
+        <a class="cta" href="#diagnostics">Посмотреть диагностику</a>
       </div>
     </header>
 
     <main>
+      <section class="container diagnostics" id="diagnostics">
+        <h2>Диагностическая сводка</h2>
+        <p class="muted">
+          Ниже приведена подробная информация о вашем устройстве, браузере,
+          сети и среде. Данные обновляются в реальном времени и не покидают ваш
+          браузер, за исключением запросов к открытым сервисам IP-геолокации.
+        </p>
+
+        <div class="diag-grid">
+          <section class="card diag-card">
+            <h3>Браузер и устройство</h3>
+            <dl class="diag-list">
+              <div>
+                <dt>User-Agent</dt>
+                <dd id="diag-user-agent">Собираем данные...</dd>
+              </div>
+              <div>
+                <dt>Платформа</dt>
+                <dd id="diag-platform">—</dd>
+              </div>
+              <div>
+                <dt>Языки</dt>
+                <dd id="diag-languages">—</dd>
+              </div>
+              <div>
+                <dt>Часовой пояс</dt>
+                <dd id="diag-timezone">—</dd>
+              </div>
+              <div>
+                <dt>Локальное время</dt>
+                <dd id="diag-local-time">—</dd>
+              </div>
+              <div>
+                <dt>Аппаратные потоки</dt>
+                <dd id="diag-hardware">—</dd>
+              </div>
+              <div>
+                <dt>Оперативная память</dt>
+                <dd id="diag-memory">—</dd>
+              </div>
+              <div>
+                <dt>Мобильное устройство</dt>
+                <dd id="diag-mobile">—</dd>
+              </div>
+              <div>
+                <dt>Поддержка сенсора</dt>
+                <dd id="diag-touch">—</dd>
+              </div>
+              <div>
+                <dt>Батарея</dt>
+                <dd id="diag-battery">—</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="card diag-card">
+            <h3>Экран и производительность</h3>
+            <dl class="diag-list">
+              <div>
+                <dt>Разрешение экрана</dt>
+                <dd id="diag-screen">—</dd>
+              </div>
+              <div>
+                <dt>Размер окна</dt>
+                <dd id="diag-viewport">—</dd>
+              </div>
+              <div>
+                <dt>Плотность пикселей</dt>
+                <dd id="diag-pixel-ratio">—</dd>
+              </div>
+              <div>
+                <dt>Видимость страницы</dt>
+                <dd id="diag-visibility">—</dd>
+              </div>
+              <div>
+                <dt>Тип навигации</dt>
+                <dd id="diag-navigation">—</dd>
+              </div>
+              <div>
+                <dt>Время загрузки</dt>
+                <dd id="diag-performance">—</dd>
+              </div>
+              <div>
+                <dt>Использование хранилища</dt>
+                <dd id="diag-storage">—</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="card diag-card">
+            <h3>Сеть и происхождение</h3>
+            <dl class="diag-list">
+              <div>
+                <dt>IP-адрес</dt>
+                <dd id="diag-ip">Запрашиваем...</dd>
+              </div>
+              <div>
+                <dt>Провайдер</dt>
+                <dd id="diag-network">—</dd>
+              </div>
+              <div>
+                <dt>Местоположение</dt>
+                <dd id="diag-location">—</dd>
+              </div>
+              <div>
+                <dt>Состояние сети</dt>
+                <dd id="diag-online">—</dd>
+              </div>
+              <div>
+                <dt>Тип соединения</dt>
+                <dd id="diag-connection">—</dd>
+              </div>
+              <div>
+                <dt>Реферер</dt>
+                <dd id="diag-referrer">—</dd>
+              </div>
+              <div>
+                <dt>Источники брендов UA</dt>
+                <dd id="diag-ua-brands">—</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="card diag-card">
+            <h3>Геопозиция</h3>
+            <p class="muted">
+              Для получения точных координат требуется ваше разрешение. Данные не
+              отправляются на сервер и остаются только на этой странице.
+            </p>
+            <button class="geo-button" type="button" id="diag-geo-btn">
+              Запросить координаты
+            </button>
+            <dl class="diag-list">
+              <div>
+                <dt>Статус</dt>
+                <dd id="diag-geo-status">Ожидание действия</dd>
+              </div>
+              <div>
+                <dt>Широта / долгота</dt>
+                <dd id="diag-geo">—</dd>
+              </div>
+              <div>
+                <dt>Точность</dt>
+                <dd id="diag-geo-accuracy">—</dd>
+              </div>
+            </dl>
+          </section>
+        </div>
+      </section>
+
       <section class="container" id="features">
         <h2>Что включено</h2>
         <div class="features">

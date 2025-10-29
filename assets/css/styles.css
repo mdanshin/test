@@ -28,6 +28,10 @@ body {
   line-height: 1.6;
 }
 
+.muted {
+  color: var(--muted);
+}
+
 .container {
   width: min(960px, 92vw);
   margin: 0 auto;
@@ -86,6 +90,80 @@ h1 {
   display: grid;
   gap: 1.5rem;
   margin: 2.5rem 0 3rem;
+}
+
+.diagnostics {
+  padding: 4rem 0 3rem;
+}
+
+.diag-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .diag-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .diag-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.diag-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 100%;
+}
+
+.diag-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.diag-list div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.diag-list dt {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.diag-list dd {
+  margin: 0;
+  word-break: break-word;
+  font-weight: 600;
+}
+
+.geo-button {
+  align-self: flex-start;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.geo-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(124, 58, 237, 0.25);
+}
+
+.geo-button:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 3px;
 }
 
 @media (min-width: 768px) {
