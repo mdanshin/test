@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Мой тестовый проект</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <span class="badge">GitHub Pages</span>
+        <h1>Простой тестовый проект</h1>
+        <p class="lead">
+          Этот сайт создан как демонстрация того, насколько легко опубликовать
+          статический проект с помощью GitHub Pages.
+        </p>
+        <a class="cta" href="#steps">Как развернуть</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="container" id="features">
+        <h2>Что включено</h2>
+        <div class="features">
+          <article class="card">
+            <h3>Чистая разметка</h3>
+            <p>
+              Структура страницы построена на семантическом HTML и легко
+              расширяется под нужды проекта.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Минимальные стили</h3>
+            <p>
+              Подключен небольшой набор стилей, чтобы страница выглядела
+              аккуратно без дополнительной настройки.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Немного интерактива</h3>
+            <p>
+              Простая анимация и смена темы на чистом JavaScript.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="highlight" id="steps">
+        <div class="container">
+          <h2>Как опубликовать этот проект</h2>
+          <ol class="steps">
+            <li>Создайте новый репозиторий на GitHub и загрузите в него файлы.</li>
+            <li>
+              Откройте вкладку <strong>Settings → Pages</strong> и выберите ветку
+              <code>main</code> (или <code>master</code>) и директорию <code>/</code>.
+            </li>
+            <li>
+              Нажмите <strong>Save</strong>. Через пару минут сайт станет доступен по
+              адресу <code>https://&lt;ваш_логин&gt;.github.io/&lt;имя_репозитория&gt;</code>.
+            </li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          Сделано с любовью к статическим сайтам.
+          <button class="theme-toggle" type="button">Сменить тему</button>
+        </p>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
