@@ -257,6 +257,7 @@ h1,
 .speed-status {
   font-size: 0.95rem;
   color: var(--muted);
+  white-space: pre-line;
 }
 
 .speed-button {
